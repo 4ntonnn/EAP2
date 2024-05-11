@@ -1,0 +1,191 @@
+"","País","GDP_per_capita"
+"1","Afghanistan",1516.3057
+"2","Albania",14518.906
+"3","Algeria",11039.806
+"4","Angola",5908.57
+"5","Antigua and Barbuda",19124.43
+"6","Argentina",21527.195
+"7","Armenia",14193.117
+"8","Aruba",38866.332
+"9","Australia",49774.34
+"10","Austria",54121.145
+"11","Azerbaijan",14431.661
+"12","Bahamas",30210.162
+"13","Bahrain",49387.418
+"14","Bangladesh",5911.013
+"15","Barbados",13754.803
+"16","Belarus",19751.203
+"17","Belgium",51739.54
+"18","Belize",8762.623
+"19","Benin",3321.5522
+"20","Bermuda",80271.13
+"21","Bhutan",10907.856
+"22","Bolivia",8052.1772
+"23","Bosnia and Herzegovina",15666.54
+"24","Botswana",14840.913
+"25","Brazil",14592.353
+"26","Brunei",60127.023
+"27","Bulgaria",24398.13
+"28","Burkina Faso",2179.789
+"29","Burundi",705.0304
+"30","Cambodia",4354.5654
+"31","Cameroon",3700.4644
+"32","Canada",47892.945
+"33","Cape Verde",6114.1333
+"34","Cayman Islands",67500.1
+"35","Central African Republic",837.5047
+"36","Chad",1425.4945
+"37","Chile",25449.13
+"38","China",17602.695
+"39","Colombia",14648.592
+"40","Comoros",3228.5269
+"41","Congo",3234.393
+"42","Costa Rica",21199.281
+"43","Cote d'Ivoire",5325.0303
+"44","Croatia",31635.824
+"45","Curacao",20783.086
+"46","Cyprus",41701.703
+"47","Czechia",40740.992
+"48","Democratic Republic of Congo",1073.6433
+"49","Denmark",57962.652
+"50","Djibouti",4913.2563
+"51","Dominica",10878.037
+"52","Dominican Republic",18626.078
+"53","East Timor",5032.41
+"54","Ecuador",10668.758
+"55","Egypt",11566.05
+"56","El Salvador",9086.047
+"57","Equatorial Guinea",14637.008
+"58","Estonia",38717.695
+"59","Eswatini",8856.829
+"60","Ethiopia",2319.0684
+"61","Fiji",10359.204
+"62","Finland",48753.355
+"63","France",44993.125
+"64","Gabon",13813.723
+"65","Gambia",2076.5664
+"66","Georgia",15486.659
+"67","Germany",53179.656
+"68","Ghana",5435.238
+"69","Greece",29548.04
+"70","Grenada",13688.256
+"71","Guatemala",8926.7
+"72","Guinea",2640.3442
+"73","Guinea-Bissau",1831.3832
+"74","Guyana",21925.188
+"75","Haiti",2870.145
+"76","Honduras",5572.177
+"77","Hong Kong",59978.15
+"78","Hungary",33593.152
+"79","Iceland",53586.156
+"80","India",6592.042
+"81","Indonesia",11858.146
+"82","Iran",15004.6875
+"83","Iraq",8962.395
+"84","Ireland",102496.22
+"85","Israel",42061.242
+"86","Italy",41929.43
+"87","Jamaica",9596.564
+"88","Japan",40784.383
+"89","Jordan",9223.147
+"90","Kazakhstan",26110.53
+"91","Kenya",4743.4863
+"92","Kiribati",1937.0894
+"93","Kosovo",11884.18
+"94","Kyrgyzstan",4814.9565
+"95","Laos",7846.975
+"96","Latvia",32081.455
+"97","Lebanon",12977.202
+"98","Lesotho",2295.2322
+"99","Liberia",1423.2296
+"100","Libya",21965.174
+"101","Lithuania",39305.613
+"102","Luxembourg",115683.49
+"103","Macao",64796.996
+"104","Madagascar",1463.6288
+"105","Malawi",1491.1339
+"106","Malaysia",26333.156
+"107","Maldives",18765.217
+"108","Mali",2120.6233
+"109","Malta",44658.72
+"110","Marshall Islands",5961.8164
+"111","Mauritania",5307.522
+"112","Mauritius",20967.947
+"113","Mexico",19086.105
+"114","Micronesia (country)",3315.2302
+"115","Moldova",14009.226
+"116","Mongolia",11668.431
+"117","Montenegro",20602.5
+"118","Morocco",8058.397
+"119","Mozambique",1226.767
+"120","Myanmar",4032.6257
+"121","Namibia",9137.797
+"122","Nauru",11947.395
+"123","Nepal",3831.9485
+"124","Netherlands",56617.35
+"125","New Zealand",42915.453
+"126","Nicaragua",5638.748
+"127","Niger",1186.5768
+"128","Nigeria",4922.6323
+"129","North Macedonia",16467.316
+"130","Norway",65662.17
+"131","Oman",34294.766
+"132","Pakistan",5232.1426
+"133","Palau",13785.397
+"134","Palestine",5643.0723
+"135","Panama",29037.945
+"136","Papua New Guinea",3677.4602
+"137","Paraguay",13687.655
+"138","Peru",12514.651
+"139","Philippines",8094.693
+"140","Poland",34915.523
+"141","Portugal",33674.527
+"142","Puerto Rico",32632.883
+"143","Qatar",92862.35
+"144","Romania",30776.93
+"145","Russia",27960.102
+"146","Rwanda",2238.9573
+"147","Saint Kitts and Nevis",26485.816
+"148","Saint Lucia",13045.955
+"149","Saint Vincent and the Grenadines",13695.039
+"150","Samoa",5534.127
+"151","Sao Tome and Principe",4052.1233
+"152","Saudi Arabia",44339.312
+"153","Senegal",3495.4036
+"154","Serbia",19831.297
+"155","Seychelles",28760.516
+"156","Sierra Leone",1614.6981
+"157","Singapore",106032.23
+"158","Slovakia",31866.025
+"159","Slovenia",40036.484
+"160","Solomon Islands",2406.1135
+"161","Somalia",1136.736
+"162","South Africa",13311.926
+"163","South Korea",44232.207
+"164","Spain",37913.074
+"165","Sri Lanka",13386.682
+"166","Sudan",3701.069
+"167","Suriname",14766.748
+"168","Sweden",53613.42
+"169","Switzerland",71032.84
+"170","Tajikistan",3903.32
+"171","Tanzania",2581.6997
+"172","Thailand",17077.043
+"173","Togo",2124.8042
+"174","Tonga",6142.857
+"175","Trinidad and Tobago",23037.143
+"176","Tunisia",10397.944
+"177","Turkey",31466.56
+"178","Turks and Caicos Islands",18512.457
+"179","Tuvalu",4924.0273
+"180","Uganda",2246.414
+"181","Ukraine",12943.614
+"182","United Arab Emirates",69733.8
+"183","United Kingdom",44978.715
+"184","United States",63669.71
+"185","Uruguay",22800.69
+"186","Uzbekistan",7734.8325
+"187","Vanuatu",2783.0195
+"188","Vietnam",10628.219
+"189","Zambia",3236.789
+"190","Zimbabwe",2115.1445
