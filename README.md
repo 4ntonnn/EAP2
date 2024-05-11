@@ -12,4 +12,4 @@ Perc_no_educ = Porcentaje poblacional que no cuenta con educación formal en 202
 
 GDP_per_capita = GDP per capita en 2021
 
-Transp_laws = Leyes transparentes ; 1 = posee leyes transparentes , 0 = no posee leyes transparentes
+Transp_laws = Leyes transparentes (2023); 1 = posee leyes transparentes , 0 = no posee leyes transparentes
