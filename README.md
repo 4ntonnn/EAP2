@@ -7,7 +7,7 @@ País: Todos los países y Estados no reconocidos
 
 Pol_corruption_index = Score del Índice de corrupción política por país en 2023; los valores de corrupción varían de 0 a 1, donde aquellos más próximos a 0 indica una menor tendencia de corrupción, mientras que los más cercanos a 1 indican una alta tendencia.
 
-Democracy_index = Score del Índice de democracia por país en 2022; los valores de democracia varían de 0 a 1, donde aquellos más próximos a 0 indica una menor tendencia de corrupción, mientras que los más cercanos a 1 indican una alta tendencia.
+Democracy_index = Score del Índice de democracia por país en 2022; los valores de democracia varían de 0 a 10, donde aquellos más próximos a 0 indica una menor tendencia de democracia, mientras que los más cercanos a 10 indican una alta tendencia.
 
 Conf_gov = Porcentaje de confianza en el gobierno por país en 2022
 
