@@ -3,14 +3,16 @@ Diccionarios de datos:
 
 Base de datos: Data_entregable.csv
 
-Pol_corruption_index = Índice de corrupción política en 2023
+País: Todos los países y Estados no reconocidos
 
-Democracy_index = Índice de democracia en 2022
+Pol_corruption_index = Score del Índice de corrupción política por país en 2023
 
-Conf_gov = Porcentaje de confianza en el gobierno en 2022
+Democracy_index = Score del Índice de democracia por país en 2022
 
-Perc_no_educ = Porcentaje poblacional que no cuenta con educación formal en 2020
+Conf_gov = Porcentaje de confianza en el gobierno por país en 2022
 
-GDP_per_capita = GDP per capita en 2021
+Perc_no_educ = Porcentaje poblacional que no cuenta con educación formal por país en 2020
 
-Transp_laws = Leyes transparentes (2023); 1 = posee leyes transparentes , 0 = no posee leyes transparentes
+GDP_per_capita = GDP per capita en dólares por país en 2021
+
+Transp_laws = Tenencia de Leyes transparentes de los países en 2023; 1 = posee leyes transparentes , 0 = no posee leyes transparentes
