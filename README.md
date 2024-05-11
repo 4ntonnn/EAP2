@@ -1,4 +1,4 @@
-# TrabajoEAP2_2024-1
+# TrabajoEAP2_2024-1 (Diego Tipula Palli)
 Diccionarios de datos:
 Base de datos: Data_entregable.csv
 
