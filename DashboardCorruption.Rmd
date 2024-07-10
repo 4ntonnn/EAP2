@@ -1,0 +1,651 @@
+---
+title: "Corrupcion_dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+```
+
+Variable central {data-icon="fa-signal"}
+===================================== 
+
+```{r include=FALSE}
+library(pacman)
+p_load(psych, car, haven, tidyverse, lsr, kableExtra, Rmisc, dplyr, rio,
+DescTools, taylor, ggplot2)
+library(knitr)
+library(rmarkdown)
+library(modelsummary)
+library(sf)
+library(corrplot)
+library(ggcorrplot)
+library(desc)
+library(flexdashboard)
+
+```
+```{r include=FALSE}
+library(lm.beta)
+```
+
+```{r include=FALSE}
+library(lmtest)
+```
+```{r include=FALSE}
+library(BBmisc)
+```
+```{r include=FALSE}
+library(cluster)
+```
+```{r include=FALSE}
+library(factoextra)
+```
+```{r include=FALSE}
+library(ggrepel)
+```
+
+
+```{r}
+data <- import("Corrupcion_data_final.csv")
+```
+```{r include=FALSE}
+dataparaclus <- import("Corrupcion_data_final.csv")
+```
+
+
+
+
+
+
+Column {data-width=800}
+-----------------------------------------------------------------------
+
+### Mapa mundial
+```{r include=FALSE}
+folder="world_map" #A partir de la carpeta, como que la adjuntas
+file="world_map.shp"
+
+mapaFile=file.path(folder,file)
+
+#Solo copias directamente este código
+```
+```{r include=FALSE}
+worldmap=st_read(mapaFile,stringsAsFactors=FALSE)
+#Copiaaar
+```
+```{r include=FALSE}
+names(worldmap)[5] <- "País"
+```
+```{r include=FALSE}
+world_map_data=inner_join(worldmap,data,by="País")
+```
+```{r include=FALSE}
+world_map_data_corregido=world_map_data[complete.cases(world_map_data$Pol_corruption_index),]
+```
+```{r}
+ggplot(world_map_data_corregido)+
+  geom_sf(aes(fill=Pol_corruption_index),lwd=0.2)+ #Colocar variable
+   geom_sf_text(aes(label =País), size = 2
+                ,family="sans",fontface = "bold",check_overlap = TRUE
+                )+
+  guides(fill=guide_colorbar(title = "Leyenda")) +
+  labs(title = "Mapa del índice de corrupción política del 2023", caption = "Fuente: Elaboración propia" 
+      # ,subtitle = "añadir si se desea",
+      #caption = "Fuente: Our World in Data"
+      ) +
+  scale_fill_gradient(breaks=c(0,25,50,75,100),limits= c(0,100), high = "red", low = "green", guide = "colorbar" ) + 
+ theme_bw()+
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks =  element_blank(),
+    axis.title = element_blank(),
+    panel.border = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank()
+  
+    )+
+
+  theme(
+    legend.position=c(0.1, 0.3),
+    legend.title = element_text(colour="black", size=10,  face="bold"),
+    #"left","bottom"
+      )
+```
+
+
+### Gráfico 2
+
+```{r}
+boxplot(data$Pol_corruption_index, 
+        main = "Boxplot de Pol_corruption_index", # Título del gráfico
+        ylab = "Valor de Pol_corruption_index",   # Etiqueta del eje y
+        col = "skyblue",                          # Color del boxplot
+        border = "black",                         # Color del borde
+        notch = FALSE,                            # Sin muesca en la caja
+        horizontal = FALSE,                       # Boxplot vertical
+        outline = TRUE) 
+```
+
+
+
+
+Column {data-width=600}
+-----------------------------------------------------------------------
+
+### Histograma de la variable dependiente
+
+```{r}
+hist(data$Pol_corruption_index, main="Distribución del Índice de Corrupción", xlab="Índice de Corrupción", col="blue", border="white")
+```
+
+### Estadísticos de la variable dependiente
+```{r include=FALSE}
+media <- round(mean(data$Pol_corruption_index, na.rm = TRUE),2)
+mediana <- round(median(data$Pol_corruption_index, na.rm = TRUE),2)
+desviacion_estandar <- round(sd(data$Pol_corruption_index, na.rm = TRUE),2)
+iqr <- round(IQR(data$Pol_corruption_index, na.rm = TRUE),2)
+minimo <- round(min(data$Pol_corruption_index, na.rm = TRUE),2)
+maximo <- round(max(data$Pol_corruption_index, na.rm = TRUE),2)
+cuartil_1 <- round(quantile(data$Pol_corruption_index, 0.25, na.rm = TRUE),2)
+cuartil_3 <- round(quantile(data$Pol_corruption_index, 0.75, na.rm = TRUE),2)
+```
+```{r include=FALSE}
+medidas <- data.frame(
+  Medida = c("Media", "Mediana", "Desviación Estándar", "IQR (Rango Intercuartílico)", "Mínimo", "Máximo", "Cuartil 1 (Q1)", "Cuartil 3 (Q3)"),
+  Valor = c(media, mediana, desviacion_estandar, iqr, minimo, maximo, cuartil_1, cuartil_3)
+)
+```
+```{r}
+medidas %>%
+  kable("html", col.names = c("Medida", "Valor"), caption = "Medidas de Tendencia Central y Dispersión del Índice de Corrupción") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"), full_width = F)
+```
+
+
+Column {data-width=600}
+-----------------------------------------------------------------------
+### Análisis previo
+- A partir del cuadro con tendencias centrales y dispersión, a priori, se puede observar que el caso mínimo es 0.3 y el caso máximo representa 96.7.
+- Del mismo modo, mayormente existen tonalidades rojizas, lo cual indica que puede haber más casos de países con un mayor indice de corrupción a comparación de los que presentan poco.
+- Tanto la media como la mediana son prácticamente iguales. Así, la mayoría de datos puede estar centrada en dicho valor.
+- No existe una asimetría muy preocupante. No obstante, parece haber cierta variabilidad en cuanto al IQR; es decir, hay dispersión entre el Q1 y Q3.
+
+
+Correlaciones numéricas {data-icon="fa-table"}
+=====================================  
+
+Column {data-width=600}{.tabset}
+-----------------------------------------------------------------------
+
+### Matriz de correlación (Cuadro)
+```{r include=FALSE}
+matriz_data <- data %>% 
+  select(2,3,4,6,7)
+```
+```{r}
+matriz <- cor(matriz_data, use = "complete.obs")
+matriz%>% 
+  round(2) %>% 
+  kbl() |>
+  kable_styling()
+```
+
+
+### Corrupción y democracia
+```{r}
+data |> 
+  ggplot()+
+  aes(x=Democracy_index, y=Pol_corruption_index)+
+  geom_point(colour="red") +
+  xlab("Indice de democracia")+
+  ylab("Indice de corrupción")+
+  ggtitle("Relación entre el indice de corrupcion e indice de democracia")+
+  theme_light()
+```
+
+
+
+### Corrupción y GDP
+```{r}
+data |> 
+  ggplot()+
+  aes(x=GDP_per_capita, y=Pol_corruption_index)+
+  geom_point(colour="red") +
+  xlab("GDP per capita")+
+  ylab("Indice de corrupción")+
+  ggtitle("Relación entre el indice de corrupcion y el GDP per capita")+
+  theme_light()
+```
+
+
+### Corrupción y desempleo
+```{r}
+data |> 
+  ggplot()+
+  aes(x=Unemployment_rate, y=Pol_corruption_index)+
+  geom_point(colour="red") +
+  xlab("Tasa de desempleo")+
+  ylab("Indice de corrupción")+
+  ggtitle("Relación entre el indice de corrupcion y la tasa de desempleo")+
+  theme_light()
+```
+
+
+### Corrupción y libertad de prensa
+```{r}
+data |> 
+  ggplot()+
+  aes(x=Press_freedom_index, y=Pol_corruption_index)+
+  geom_point(colour="red") +
+  xlab("Indice de libertad de prensa")+
+  ylab("Indice de corrupción")+
+  ggtitle("Relación entre el indice de corrupcion y el indice de libertad de prensa")+
+  theme_light()
+```
+
+
+Column {data-width=600}{.tabset}
+-----------------------------------------------------------------------
+### Corrplot
+```{r}
+corrplot(matriz, method="number", order = 'AOE', type = 'upper', insig = "blank") 
+```
+
+
+
+### Corrupción y Democracia
+```{r}
+cor.test(data$Democracy_index, data$Pol_corruption_index)
+```
+- Aparentemente, a partir del gráfico entre ambas variables, existe una correlación negativa fuerte.
+- A partir del coeficiente de correlación de Pearson, se obtiene que lo anterior sí es verdad.
+- En tal sentido, es fuerte y, en cuanto a su dirección,mientras una variable aumenta la otra disminuye, ya que su signo es negativo (-0.7190).
+- Según el criterio de Cohen, esta correlación es alta.
+- Además, esta correlación es estadisticamente significativa, ya que al ser su p-value menor a 0.05, se rechaza la hipótesis nula de que no existe correlación lineal.
+
+### Corrupción y GDP
+```{r}
+cor.test(data$GDP_per_capita, data$Pol_corruption_index)
+```
+- Aparentemente, a partir del gráfico entre ambas variables, visualmente existe una correlación negativa fuerte.
+- A partir del coeficiente de correlación de Pearson, se obtiene que lo anterior sí es verdad.
+- En tal sentido, es fuerte y, en cuanto a su dirección,mientras una variable aumenta la otra disminuye, ya que su signo es negativo (-0.5913).
+- Según el criterio de Cohen, esta correlación es alta.
+- Además, esta correlación es estadisticamente significativa, ya que al ser su p-value menor a 0.05, se rechaza la hipótesis nula de que no existe correlación lineal.
+
+### Corrupción y desempleo
+```{r}
+cor.test(data$Unemployment_rate, data$Pol_corruption_index)
+```
+- Aparentemente, a partir del gráfico entre ambas variables, visualmente existe una correlación positiva débil al estar los casos un tanto dispersos.
+- A partir del coeficiente de correlación de Pearson, se obtiene que lo anterior sí es verdad.
+- En tal sentido, es débil y, en cuanto a su dirección,mientras una variable aumenta la otra aumenta, ya que su signo es positivo (0.1403).
+- Según el criterio de Cohen, esta correlación es pequeña.
+- Además, esta correlación no es estadisticamente significativa, ya que al ser su p-value un poco mayor a 0.05, se acepta la hipótesis nula de que no existe correlación lineal. No obstante, incluirla en una regresión múltiple (OLS) más adelante genera beneficios significativos para el modelo en general de regresión.
+
+### Corrupción y libertad de prensa
+```{r}
+cor.test(data$Press_freedom_index, data$Pol_corruption_index)
+```
+- Aparentemente, a partir del gráfico entre ambas variables, visualmente existe una correlación positiva fuerte.
+- A partir del coeficiente de correlación de Pearson, se obtiene que lo anterior sí es verdad.
+- En tal sentido, es fuerte y, en cuanto a su dirección,mientras una variable aumenta la otra aumenta, ya que su signo es positivo (0.6191).
+- Según el criterio de Cohen, esta correlación es alta.
+- Además, esta correlación es estadisticamente significativa, ya que al ser su p-value menor a 0.05, se rechaza la hipótesis nula de que no existe correlación lineal.
+
+Correlaciones no numéricas {data-icon="fa-table"}
+===================================== 
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+### Correlación entre Corrupción y Leyes transparentes
+```{r include=FALSE}
+colNums=names(data)[c(2,3,4,6,7)]
+```
+
+```{r}
+colCats=setdiff(names(data), colNums)[-1]
+diffPara=c()
+diffNoPara=c()
+
+for (col in colCats){
+    diffPara=c(diffPara,t.test(data[,"Pol_corruption_index"]~data[,col])['p.value']<=0.05)
+    diffNoPara=c(diffNoPara,wilcox.test(data[,"Pol_corruption_index"]~data[,col])['p.value']<=0.05)
+}
+data.frame(cbind(colCats,diffPara,diffNoPara),
+           row.names = 1:length(colCats))%>%
+           kable(caption = "Diferencia de 'VD:Indice de corrupción' por Grupo")%>%
+            kableExtra::kable_styling(full_width = FALSE)
+```
+
+
+### Box plot
+```{r}
+par(mfrow = c(1, 1))  
+
+for (col in colCats) { 
+  boxplot(data$Pol_corruption_index ~ data$Transp_laws,
+        main = "Transp_laws",
+        xlab = "Transp_laws",
+        ylab = "Pol_corruption_index",
+        col = "lightblue")
+}
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Observaciones
+- Según el box plot, la mediana de la variable central es difrente entre los grupos de Transp_laws.
+- Al observar su IQR, se tiene que la caja del grupo (0) es más alta que la otras. Así, en esta existe más dispersión en los datos.
+- La variable Transp_laws muestra TRUE para ambas pruebas (diffPara y diffNoPara). Se puede decir que hay una diferencia estadísticamente significativa en los valores de Pol_corruption_index entre los dos grupos de Transp_laws.
+- En tal sentido, existe una relación significativa entre Pol_corruption_index y Transp_laws.
+
+Regresión Lineal Múltiple {data-icon="fa-cogs"}
+===================================== 
+
+
+```{r include=FALSE}
+reg_ols1 <- lm(Pol_corruption_index ~ Democracy_index + GDP_per_capita + Transp_laws + Unemployment_rate + Press_freedom_index,
+               data = data)
+summary(reg_ols1)
+```
+
+
+```{r include=FALSE}
+reg_ols1_st = lm(scale(Pol_corruption_index) ~ scale(Democracy_index) + scale(GDP_per_capita) + scale(as.numeric(Transp_laws)) + scale(Unemployment_rate) + scale(Press_freedom_index), data = data)
+summary(reg_ols1_st)
+```
+
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+### Regresión estandarizada 1
+
+```{r}
+modelo_st=list('Índice de corrupción estandarizado' = reg_ols1_st)
+modelsummary(modelo_st, title = "Regresión: modelo con \ncoeficientes estandarizados",
+             stars = TRUE,
+             output = "kableExtra")
+```
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+### Regresión estandarizada 2
+
+```{r}
+model3beta=list('Regresión múltiple'=lm.beta(reg_ols1))
+modelsummary(model3beta, title = "Regresion: modelo con \ncoeficientes estandarizados usando lm.beta()",
+             stars = TRUE,
+             output = "kableExtra")
+```
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+### Conclusiones
+- La regresión toma en cuenta todos los predictores al mismo tiempo.
+- El modelo es válido.
+- La primera regresión cuenta con una estandarización manual, pero la segunda es más accesible, ya que el paquete "lm.beta" lo hace directamente.
+- Además, siguiendo nuestro intervalo, diremos que el modelo tiene un ALTO nivel explicativo, dado que el R2 ajustado es de 0.669 (66.90% de la variabilidad de Y es explicada por nuestras X´s).
+- Vemos que la variable que tendría mayor impacto es Transp Laws.
+- En tal sentido,SÍ tiene efecto significativo al 0.001; ese efecto no es directo, puesto que el coeficiente calculado es negativo; y la magnitud de ese efecto es -0.185, lo que indica que el indice de corrupción disminuye en promedio en 0.185 cuando Transp Laws es 1 y no 0 controlado la variable de control.
+- Se puede decir que, entre todas las variables analizadas, Transp_laws es la que más contribuye a explicar la variabilidad en el índice de corrupción. Esto sugiere que las leyes de transparencia tienen un impacto importante y significativo en la reducción de la corrupción.
+
+
+Diagnósticos de la regresión {data-icon="fa-cogs"}
+===================================== 
+
+Column {data-width=600}{.tabset}
+-----------------------------------------------------------------------
+
+### Linealidad 
+```{r}
+plot(reg_ols1, 1)
+```
+
+
+### Homocedasticidad
+
+```{r}
+plot(reg_ols1, 3)
+```
+
+### Normalidad de residuos
+```{r}
+plot(reg_ols1, 2)
+```
+
+
+### No multicolinealidad 
+```{r}
+VIF(reg_ols1) %>%kable(col.names = "VIF",caption ="Evaluando Multicolinealidad usando VIF (Variance Inflation Factors)" )%>%kable_styling(full_width = F)
+```
+
+
+### Valores influyentes
+```{r}
+plot(reg_ols1, 5)
+```
+
+
+Column {data-width=600}{.tabset}
+-----------------------------------------------------------------------
+
+### Linealidad 
+
+- Se puede apreciar que la linea roja tiende a ser horizontal
+
+### Homocedasticidad
+```{r}
+resBP=bptest(reg_ols1)
+data.frame(list('BP'=resBP$statistic,
+             'df'=resBP$parameter,
+             "p-value"=resBP$p.value))%>%
+    kable(caption = resBP$method)%>%kable_styling(full_width = F)
+```
+
+- Al ser la hipótesis nula de que los errores son homocedásticos, el p-valor resulta mayor a 0.05.
+- En tal sentido, no se rechaza la hipótesis nula, por lo que los errores son homocedásticos 
+- Así, la varianza de los errores es constante y no muestra un patrón.
+
+### Normalidad de residuos
+```{r}
+resSW=shapiro.test(reg_ols1$residuals)
+data.frame(list('SW'=resSW$statistic,
+             "p-value"=resSW$p.value))%>%
+    kable(caption = resSW$method)%>%kable_styling(full_width = F)
+```
+
+
+- El test de Shapiro-Wilks plantea la hipótesis nula que una muestra proviene de una distribución normal. Eligimos un nivel de significanza, por ejemplo 0,05, y tenemos una hipótesis alternativa que sostiene que la distribución no es normal.
+- Al ser el p-valor mayor a 0.05, esto indica que los residuos (la distancia entre el valor esperado y el valor observado) se distribuyen de manera normal.
+
+### No multicolinealidad 
+- Cabe destacar que la presencia de la multicolinealidad no perjudica tanto el calculo de Indice de corrupción, pero evita calcular bien el efecto de cada regresor.
+- Al ser todas menores a 5, no hay una correlación muy alta entre predictores lo cual es bueno.
+
+### Valores influyentes
+```{r}
+checkinflu=as.data.frame(influence.measures(reg_ols1)$is.inf)
+checkinflu[checkinflu$cook.d & checkinflu$hat,c('cook.d','hat')]%>%kable(caption = "Valores Influyentes criticos")%>%kable_styling(full_width = F)
+```
+
+- No existen valores influyentes, en tal sentido, no se afecta los calculos de la regresión.
+
+Clusterización via Partición {data-icon="fa-tags"}
+===================================== 
+Column {data-width=600}
+-----------------------------------------------------------------------
+
+### Estrategia de partición y número de clusters
+```{r}
+dataparaclus <- na.omit(dataparaclus)
+```
+
+```{r include=FALSE}
+dataparaclus[,c(2:7)]=normalize(dataparaclus[,c(2:7)],method='standardize')
+```
+```{r include=FALSE}
+dataClus=dataparaclus[,c(2:7)]
+```
+```{r include=FALSE}
+row.names(dataClus)=dataparaclus$País
+```
+```{r}
+dataClus <- na.omit(dataClus)
+```
+
+```{r include=FALSE}
+g.dist = daisy(dataClus, metric="gower")
+```
+```{r}
+fviz_nbclust(dataClus, pam,diss=g.dist,method = "gap_stat",k.max = 10,verbose = F)
+```
+
+### Evaluando el uso de PAM
+```{r include=FALSE}
+set.seed(123)
+res.pam=pam(g.dist,9,cluster.only = F)
+
+#nueva columna
+dataClus$pam=res.pam$cluster
+
+```
+```{r}
+fviz_silhouette(res.pam,print.summary = F)
+```
+
+
+Column {data-width=600}
+-----------------------------------------------------------------------
+### Valores mal clusterizados
+```{r}
+silPAM=data.frame(res.pam$silinfo$widths)
+silPAM$country=row.names(silPAM)
+poorPAM=silPAM[silPAM$sil_width<0,'country']%>%sort()
+poorPAM
+```
+- Existe más pertenencia al cluster 5.
+
+
+### Gráfica PAM
+```{r include=FALSE}
+dataparaclus$pamCorruptionLow=dataparaclus$País%in%poorPAM  #guardemos la columna de PAM en la data integrada, y eliminemosla de dataClus.
+dataparaclus$pamCorruption=as.ordered(dataClus$pam)
+dataClus$pam=NULL
+```
+
+
+
+```{r include=FALSE}
+proyeccion = cmdscale(g.dist, k=2,add = T) 
+```
+```{r include=FALSE}
+dataparaclus$dim1 <- proyeccion$points[,1]
+dataparaclus$dim2 <- proyeccion$points[,2]
+```
+```{r include=FALSE}
+base= ggplot(dataparaclus,aes(x=dim1, y=dim2,label=row.names(dataClus))) 
+base + geom_text_repel(size=3, max.overlaps = 50,min.segment.length = unit(0, 'lines'))
+```
+
+
+```{r}
+PAMlabels=ifelse(dataparaclus$pamCorruptionLow,dataparaclus$País,'')
+
+#base
+base= ggplot(dataparaclus,aes(x=dim1, y=dim2))  +
+    scale_color_brewer(type = 'qual',palette ='Dark2'  ) + labs(subtitle = "Se destacan los países mal clusterizados de la data Corrupción")
+
+pamPlot=base + geom_point(size=3, 
+                          aes(color=pamCorruption))  + 
+        labs(title = "PAM") 
+# hacer notorios los paises mal clusterizados
+pamPlot + geom_text_repel(size=4,
+                          aes(label=PAMlabels),
+                          max.overlaps = 50,
+                          min.segment.length = unit(0, 'lines'))
+```
+
+Clusterización via Jerárquica {data-icon="fa-tags"}
+===================================== 
+Column {data-width=600}
+-----------------------------------------------------------------------
+
+
+
+```{r include=FALSE}
+fviz_nbclust(dataClus, hcut,diss=g.dist,method = "gap_stat",k.max = 10,verbose = F,hc_func = "agnes")
+```
+
+```{r include=FALSE}
+set.seed(123)
+
+res.agnes<- hcut(g.dist, k = 9,hc_func='agnes',hc_method = "ward.D")
+
+dataClus$agnes=res.agnes$cluster
+```
+
+### Evaluando el uso de AGNES
+
+
+```{r}
+fviz_silhouette(res.agnes,print.summary = F)
+```
+
+
+### Valores mal clusterizados
+
+```{r}
+silAGNES=data.frame(res.agnes$silinfo$widths)
+silAGNES$country=row.names(silAGNES)
+poorAGNES=silAGNES[silAGNES$sil_width<0,'country']%>%sort()
+poorAGNES
+```
+```{r}
+dataparaclus$agnesCorruptionLow=dataparaclus$País%in%poorAGNES  #guardemos la columna de Agnes en la data integrada, y eliminemosla de dataClus.
+dataparaclus$agnesCorruption=as.ordered(dataClus$agnes)
+dataClus$agnes=NULL
+```
+
+
+Column {data-width=600}
+-----------------------------------------------------------------------
+
+### Evaluando el uso de DIANA
+
+```{r include=FALSE}
+fviz_nbclust(dataClus, hcut,diss=g.dist,method = "gap_stat",k.max = 10,verbose = F,hc_func = "diana")
+```
+```{r include=FALSE}
+set.seed(123)
+res.diana <- hcut(g.dist, k = 3,hc_func='diana')
+dataClus$diana=res.diana$cluster
+```
+
+```{r}
+fviz_silhouette(res.diana,print.summary = F)
+```
+
+### Valores mal clusterizados
+
+```{r}
+silDIANA=data.frame(res.diana$silinfo$widths)
+silDIANA$country=row.names(silDIANA)
+poorDIANA=silDIANA[silDIANA$sil_width<0,'country']%>%sort()
+poorDIANA
+```
+```{r}
+dataparaclus$dianaCorruptionLow=dataparaclus$País%in%poorDIANA
+dataparaclus$dianaCorruption=as.ordered(dataClus$diana)
+dataClus$diana=NULL
+```
+
+
+
+
+
